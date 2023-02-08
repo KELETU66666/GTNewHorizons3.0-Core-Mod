@@ -36,7 +36,7 @@ private ResearchStage entry = new ResearchStage();
 		{
 			int[] refs = new int[entry.getCraft().length];
 			int q = 0;
-			ItemStack[] arritemStack = entry.getCraft();
+			ItemStack[] arritemStack = (ItemStack[]) entry.getCraft();
 			int n = arritemStack.length;
 			for(int i = 0; i < n; ++i)
 			{
