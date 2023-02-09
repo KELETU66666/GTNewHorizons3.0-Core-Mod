@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "gtnhcore:items/itemchaoticschematic"
+        "layer0": "gtnhcore:items/itemrobotarm"
     }
 }
