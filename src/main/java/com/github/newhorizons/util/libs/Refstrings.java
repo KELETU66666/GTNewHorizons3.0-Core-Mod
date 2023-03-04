@@ -5,7 +5,7 @@ public class Refstrings {
  //   public static final String NAME ="GRADLETOKEN_NAME";
  //   public static final String VERSION ="GRADLETOKEN_VERSION";
 
-      public static final String MODID ="gtnhcore";
-	  public static final String NAME ="GTNH Core Mod for 1.12";
-	  public static final String VERSION ="GRADLETOKEN_VERSION";
+      public static final String MODID ="gtmagiccoremod";
+	  public static final String NAME ="GTMagic Core Mod";
+	  public static final String VERSION ="1.0.0";
 }

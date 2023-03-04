@@ -3,8 +3,6 @@ package com.github.newhorizons.thaumcraft;
 import com.github.newhorizons.util.libs.Refstrings;
 import com.github.newhorizons.util.thaumcraft.AspectUtil;
 import com.github.newhorizons.util.thaumcraft.GTNHResearchHelper;
-
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

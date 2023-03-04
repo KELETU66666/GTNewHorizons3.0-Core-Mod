@@ -13,14 +13,12 @@ public class ClientProxy extends CommonProxy {
         super.preInit( event );
     }
 
-
     public void init( FMLInitializationEvent event )
     {
         super.init(event);
     }
 
-    public void onModelRegister()
-    {
+    public void onModelRegister() {
         for (int i = 0; i < itemList.ListItem.length; i++)
             ModelLoader.setCustomModelResourceLocation(itemIL, i, new ModelResourceLocation("gtnhcore" + ":" + itemList.ListItem[i], "inventory"));
     }

@@ -5,12 +5,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nonnull;
+
 public class itemList extends Item{
 
     public itemList() {
         super();
         setCreativeTab(CreativeTabs.MISC);
-        setUnlocalizedName("packresource");
         setRegistryName("packresource");
         setHasSubtypes(true);
     }
@@ -40,18 +41,19 @@ public class itemList extends Item{
     };
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         if (!isInCreativeTab(tab)) {
             return;
         }
-
         for (int i = 0; i < ListItem.length; i++) {
             items.add(new ItemStack(this, 1, i));
         }
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack item) {
-            return super.getUnlocalizedName() + "." + item.getItemDamage();
+    @Nonnull
+    public String getTranslationKey(@Nonnull ItemStack stack) {
+        return "item.packresource." + stack.getItemDamage();
     }
+
 }

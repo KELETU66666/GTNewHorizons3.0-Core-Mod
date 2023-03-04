@@ -10,18 +10,17 @@ public class CommonProxy {
 
     public static Item itemIL = new itemList();
 
-    public void preInit( FMLPreInitializationEvent event )
-    {
+    public void preInit( FMLPreInitializationEvent event ) {
     }
 
-    public void init( FMLInitializationEvent event )
-    {
-
+    public void init( FMLInitializationEvent event ) {
     }
 
     public void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(itemIL);
     }
 
-    public void onModelRegister(){}
+    public void onModelRegister() {
+
+    }
 }
