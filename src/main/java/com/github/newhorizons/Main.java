@@ -1,8 +1,8 @@
 package com.github.newhorizons;
-import com.github.newhorizons.proxy.CommonProxy;
-import com.github.newhorizons.thaumcraft.Research;
-import com.github.newhorizons.util.libs.Refstrings;
 
+import com.github.newhorizons.common.thaumcraft.Research;
+import com.github.newhorizons.proxy.CommonProxy;
+import com.github.newhorizons.util.libs.Refstrings;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -59,6 +59,7 @@ public class Main {
         /** Listen for the register event for creating custom blocks */
         @SubscribeEvent
         public static void addBlocks(RegistryEvent.Register<Block> event) {
+            proxy.registerBlocks(event);
         }
 
         @SubscribeEvent

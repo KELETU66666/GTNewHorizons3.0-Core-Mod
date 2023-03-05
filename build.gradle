@@ -130,6 +130,8 @@ dependencies {
     implementation fg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
     implementation fg.deobf("curse.maven:thaumcraft-${tc6_pid}:${tc6_fid}")
     implementation fg.deobf("curse.maven:baubles-${bbl_pid}:${bbl_fid}")
+    implementation fg.deobf("curse.maven:botania-${bot_pid}:${bot_fid}")
+    implementation fg.deobf("curse.maven:patchouli-${pcl_pid}:${pcl_fid}")
 
     // Medium Dependencies
     implementation "curse.maven:crafttweaker-${crt_pid}:${crt_fid}"
