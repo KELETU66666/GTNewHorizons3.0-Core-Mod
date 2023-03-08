@@ -132,6 +132,7 @@ dependencies {
     implementation fg.deobf("curse.maven:baubles-${bbl_pid}:${bbl_fid}")
     implementation fg.deobf("curse.maven:botania-${bot_pid}:${bot_fid}")
     implementation fg.deobf("curse.maven:patchouli-${pcl_pid}:${pcl_fid}")
+    implementation fg.deobf("curse.maven:the-twilight-forest-227639:3051450")
 
     // Medium Dependencies
     implementation "curse.maven:crafttweaker-${crt_pid}:${crt_fid}"
@@ -241,12 +242,6 @@ jar {
             attribute_map['FMLAT'] = 'gtexpert_at.cfg'
         }
         attributes(attribute_map)
-    }
-
-    // exclude all files in src/api from being shipped in the jar
-    // this prevents crashes in obfuscated environments
-    file('src/api/').eachDirRecurse { dir ->
-        exclude dir.name
     }
 }
 

@@ -36,7 +36,8 @@ public class itemList extends Item {
             "itemWyvernSchematic",
             "itemAwakenedSchematic",
             "itemChaoticSchematic",
-            "itemRobotArm"
+            "itemRobotArm",
+            "itemAluminumRaw"
     };
 
     @Override

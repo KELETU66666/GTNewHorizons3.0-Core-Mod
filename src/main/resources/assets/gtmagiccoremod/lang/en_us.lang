@@ -46,6 +46,7 @@ item.packresource.17.name=Wyvern Schematic
 item.packresource.18.name=Awakened Schematic
 item.packresource.19.name=Chaotic Schematic
 item.packresource.20.name=Robot Arm
+item.packresource.21.name=Raw Aluminum
 
 #Blocks
 tile.gtm_machine_casing.magic_machine_casing.name=Magic Casing
