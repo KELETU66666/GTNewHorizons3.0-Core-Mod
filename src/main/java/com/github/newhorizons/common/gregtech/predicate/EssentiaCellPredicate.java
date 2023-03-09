@@ -1,10 +1,14 @@
 package com.github.newhorizons.common.gregtech.predicate;
 
 import com.github.newhorizons.common.gregtech.GTMMetaBlocks;
+import com.github.newhorizons.common.gregtech.metablock.GTMMetaCasing;
 import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.BlockInfo;
 import net.minecraft.block.state.IBlockState;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class EssentiaCellPredicate {
@@ -22,6 +26,15 @@ public class EssentiaCellPredicate {
             return true;
         }
         return false;
-    });
+    }, () -> Arrays.stream(GTMMetaCasing.MetalCasingType.values())
+            .sorted(Comparator.comparing(GTMMetaCasing.MetalCasingType::getName))
+            .map(type -> new BlockInfo(GTMMetaBlocks.GTM_BLOCK_CASING.getState(type), null))
+            .toArray(BlockInfo[]::new))
+            .addTooltips("gtm.multiblock.pattern.error.essentia");
+
+  //  () -> Arrays.stream(BlockCrucible.CrucibleType.values())
+    //        .sorted(Comparator.comparingInt(BlockCrucible.CrucibleType::getTemperature))
+   //         .map(type -> new BlockInfo(GCYSMetaBlocks.CRUCIBLE.getState(type), null))
+      //      .toArray(BlockInfo[]::new));
 
 }
