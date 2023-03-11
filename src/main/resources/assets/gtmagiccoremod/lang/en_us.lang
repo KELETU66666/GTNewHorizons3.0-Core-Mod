@@ -48,6 +48,17 @@ item.packresource.19.name=Chaotic Schematic
 item.packresource.20.name=Robot Arm
 item.packresource.21.name=Raw Aluminum
 
+item.upgradeEssentia.0.name=Essentia Generator: Empty
+item.upgradeEssentia.1.name=§eEssentia Generator: Air§r
+item.upgradeEssentia.2.name=§cEssentia Generator: Thermal§r
+item.upgradeEssentia.3.name=§8Essentia Generator: Unstable§r
+item.upgradeEssentia.4.name=§dEssentia Generator: Victus§r
+item.upgradeEssentia.5.name=§5Essentia Generator: Tainted§r
+item.upgradeEssentia.6.name=§bEssentia Generator: Mechanics§r
+item.upgradeEssentia.7.name=§6Essentia Generator: Spirit§r
+item.upgradeEssentia.8.name=§aEssentia Generator: Radiation§r
+item.upgradeEssentia.9.name=§3Essentia Generator: Electric§r
+
 #Blocks
 tile.gtm_machine_casing.magic_machine_casing.name=Magic Casing
 tile.gtm_machine_casing.essentia_cell_1.name=Novice Essentia Diffusion Cell
@@ -60,4 +71,5 @@ tile.essentia_hatch.name=Essentia Input Hatch
 gtm.multiblock.pattern.error.essentia=Essentia cell tier doesn't match.
 essentiahatch.chat.0=Successfully locked to %s.
 essentiahatch.chat.1=Cleared.
-
+largeessentiagenerator.chat=Installed!
+gtmagiccoremod.machine.essentia_generator.name=Large Essentia Generator

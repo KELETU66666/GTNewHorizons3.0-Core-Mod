@@ -1,11 +1,16 @@
 package com.github.newhorizons.common.gregtech.metatileentity;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import com.github.newhorizons.client.GTMTextures;
 import com.github.newhorizons.common.gregtech.EssentiaLogic;
 import com.github.newhorizons.common.gregtech.GTMMetaBlocks;
 import com.github.newhorizons.common.gregtech.predicate.EssentiaCellPredicate;
 import com.github.newhorizons.common.gregtech.predicate.TileEntityPredicate;
 import com.github.newhorizons.common.gregtech.tileentity.EssentiaHatch;
+import com.github.newhorizons.proxy.CommonProxy;
 import com.google.common.collect.Lists;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
@@ -22,14 +27,21 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 import thaumcraft.api.blocks.BlocksTC;
 
 import javax.annotation.Nonnull;
@@ -82,9 +94,43 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
     }
 
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.logic.isActive(), this.logic.isWorkingEnabled());
+    }
+
     private void resetTileAbilities() {
         this.inputFluidInventory = new FluidTankList(true);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
+    }
+
+    public boolean updateEssentiaHatchState() {
+        for (EssentiaHatch hatch : mEssentiaHatch) {
+            hatch.mState = logic.getUpgrade();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer aPlayer, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote) {
+            ItemStack tCurrentItem = aPlayer.inventory.getCurrentItem();
+            if (tCurrentItem != null
+                    && tCurrentItem.getItem().equals(CommonProxy.Upgrades)) {
+                int tMeta = tCurrentItem.getItemDamage();
+                if ((logic.getUpgrade() & (1 << tMeta)) == 0 && tMeta != 0) {
+                    tCurrentItem.setCount(tCurrentItem.getCount() - 1);
+                    logic.setUpgrade(logic.getUpgrade() | (1 << tMeta));
+                    aPlayer.sendMessage(new TextComponentString(
+                            tCurrentItem.getDisplayName()
+                                    + I18n.translateToLocal("largeessentiagenerator.chat")));
+                }
+                updateEssentiaHatchState();
+                return true;
+            }
+        }
+        super.onRightClick(aPlayer, hand, facing, hitResult);
+        return true;
     }
 
     @Override

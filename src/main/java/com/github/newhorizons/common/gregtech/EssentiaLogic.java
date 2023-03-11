@@ -161,6 +161,10 @@ public class EssentiaLogic {
         this.mStableValue = val;
     }
 
+    public int getUpgrade() {
+        return this.mUpgrade;
+    }
+
     public void setUpgrade(int val) {
         this.mUpgrade = val;
     }

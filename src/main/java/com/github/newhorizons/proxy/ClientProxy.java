@@ -4,6 +4,7 @@ import com.github.newhorizons.client.GTMTextures;
 import com.github.newhorizons.common.gregtech.CommonBlocks;
 import com.github.newhorizons.common.gregtech.GTMMetaBlocks;
 import com.github.newhorizons.common.item.itemList;
+import com.github.newhorizons.common.item.itemUpgrade;
 import com.github.newhorizons.util.libs.Refstrings;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
@@ -26,5 +27,7 @@ public class ClientProxy extends CommonProxy {
         CommonBlocks.registerItemModels();
         for (int i = 0; i < itemList.ListItem.length; i++)
             ModelLoader.setCustomModelResourceLocation(itemIL, i, new ModelResourceLocation(Refstrings.MODID + ":" + itemList.ListItem[i], "inventory"));
+        for (int i = 0; i < itemUpgrade.ListUpgrade.length; i++)
+            ModelLoader.setCustomModelResourceLocation(Upgrades, i, new ModelResourceLocation(Refstrings.MODID + ":" + itemUpgrade.ListUpgrade[i] + "_upgrade", "inventory"));
     }
 }

@@ -4,6 +4,8 @@ import com.github.newhorizons.common.gregtech.GTMMetaEntities;
 import com.github.newhorizons.common.gregtech.materials.GTMMaterial;
 import com.github.newhorizons.common.gregtech.tileentity.EssentiaHatch;
 import com.github.newhorizons.common.item.itemList;
+import com.github.newhorizons.common.item.itemUpgrade;
+import com.github.newhorizons.common.thaumcraft.LargeEssentiaEnergyData;
 import gregtech.api.block.VariantItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -27,6 +29,8 @@ import static com.github.newhorizons.common.gregtech.GTMMetaBlocks.GTM_BLOCK_CAS
 public class CommonProxy {
 
     public static Item itemIL = new itemList();
+    public static Item Upgrades = new itemUpgrade();
+
     public static final CreativeTabs Tab = new CreativeTabs("gtmagiccoremod") {
         @Override
         @Nonnull
@@ -37,6 +41,7 @@ public class CommonProxy {
 
     public void preInit( FMLPreInitializationEvent event ) {
         GTMMetaEntities.register();
+        LargeEssentiaEnergyData.processEssentiaData();
     }
 
     public void init( FMLInitializationEvent event ) {
@@ -44,7 +49,9 @@ public class CommonProxy {
 
     public void registerItems(RegistryEvent.Register<Item> event) {
         itemIL.setCreativeTab(Tab);
+        Upgrades.setCreativeTab(Tab);
         event.getRegistry().register(itemIL);
+        event.getRegistry().register(Upgrades);
         event.getRegistry().register(createItemBlock(GTM_BLOCK_CASING, VariantItemBlock::new));
         event.getRegistry().register(createItemBlock(ESSENTIA_HATCH, ItemBlock::new));
     }

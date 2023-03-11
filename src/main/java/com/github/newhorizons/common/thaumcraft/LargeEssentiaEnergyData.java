@@ -21,7 +21,7 @@ public class LargeEssentiaEnergyData {
     public static String readJsonFile() {
         try {
             URL url = Thread.currentThread().getContextClassLoader()
-                    .getResource("assets/goodgenerator/data/essentia.json");
+                    .getResource("assets/gtmagiccoremod/data/essentia.json");
             assert url != null;
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             String s;
