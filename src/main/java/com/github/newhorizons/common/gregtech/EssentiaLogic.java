@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -322,10 +323,10 @@ public class EssentiaLogic {
         double ceoOutput = 1.0D;
         int ceoInput = (int) LargeEssentiaEnergyData.getAspectCeo(aspect) * 3;
         int chance = 2000;
-        if (depleteInput(GTMMaterial.Pure.getFluid(ceoInput))) {
+        if (depleteInput(FluidRegistry.getFluidStack("purifying_fluid", ceoInput))) {
             ceoOutput = 60.0D;
             chance = 0;
-        } else if (depleteInput(GTMMaterial.Death.getFluid(ceoInput))) {
+        } else if (depleteInput(FluidRegistry.getFluidStack("liquid_death", ceoInput))) {
             ceoOutput = Math.pow(25000D / baseValue, 4);
             chance = 4000;
         }

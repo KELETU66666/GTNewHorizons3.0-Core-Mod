@@ -45,16 +45,6 @@ public class GTMMaterial {
                 .color(0xE61B1B).iconSet(MaterialIconSet.FLUID)
                 .build();
 
-        Pure = new Material.Builder(24005, "fluidpure")
-                .fluid(FluidTypes.LIQUID)
-                .color(0xA9F1CC).iconSet(MaterialIconSet.FLUID)
-                .build();
-
-        Death = new Material.Builder(24006, "fluiddeath")
-                .fluid(FluidTypes.LIQUID)
-                .color(0x701D36).iconSet(MaterialIconSet.FLUID)
-                .build();
-
         Spirit = new Material.Builder(24007, "fluidspirit")
                 .fluid(FluidTypes.LIQUID)
                 .color(0x701D36).iconSet(MaterialIconSet.FLUID)

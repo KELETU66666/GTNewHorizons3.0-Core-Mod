@@ -12,12 +12,11 @@ import com.github.newhorizons.common.gregtech.predicate.TileEntityPredicate;
 import com.github.newhorizons.common.gregtech.tileentity.EssentiaHatch;
 import com.github.newhorizons.proxy.CommonProxy;
 import com.google.common.collect.Lists;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.GTValues;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -30,6 +29,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,12 +39,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import thaumcraft.api.blocks.BlocksTC;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,6 +83,15 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
     }
 
     @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
+            return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE)
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        return super.getCapability(capability, side);
+    }
+
+    @Override
     public void setWorkingEnabled(boolean b) {
         logic.setWorkingEnabled(b);
     }
@@ -109,6 +121,49 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
             hatch.mState = logic.getUpgrade();
         }
         return true;
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.translateToLocal("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.translateToLocal("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    protected void addDisplayText(List<ITextComponent> textList) {
+        if (!isStructureFormed()) {
+            TextComponentTranslation textComponentTranslation = new TextComponentTranslation("gregtech.multiblock.invalid_structure.tooltip", new Object[0]);
+            textComponentTranslation.setStyle((new Style()).setColor(TextFormatting.GRAY));
+            textList.add((new TextComponentTranslation("gregtech.multiblock.invalid_structure", new Object[0]))
+                    .setStyle((new Style()).setColor(TextFormatting.RED)
+                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, (ITextComponent)textComponentTranslation))));
+        } else {
+            if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
+                addMaintenanceText(textList);
+            }
+            if (hasMufflerMechanics() && !isMufflerFaceFree()) {
+                textList.add((new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed", new Object[0]))
+                        .setStyle((new Style()).setColor(TextFormatting.RED)
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, (ITextComponent)new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip", new Object[0])))));
+            }
+
+            IEnergyContainer energyContainer = this.energyContainer;
+            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0L) {
+                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+                String voltageName = GTValues.VN[GTUtility.getFloorTierByVoltage(maxVoltage)];
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", new Object[] { Long.valueOf(maxVoltage), voltageName }));
+            }
+
+            if (!this.isWorkingEnabled()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused", new Object[0]));
+            } else if (this.isActive()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.running", new Object[0]));
+                int currentProgress = (int)(this.getProgress() * 5);
+                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", new Object[] { Integer.valueOf(currentProgress) }));
+            } else {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.idling", new Object[0]));
+            }
+        }
     }
 
     @Override
@@ -179,9 +234,11 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
                 .where('C', states(getCasing()))
                 .where('E', EssentiaCellPredicate.ESSENTIA_CELLS)
                 .where('X',
-                        abilities(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH, MultiblockAbility.OUTPUT_ENERGY)
-                        .or(TileEntityPredicate.get(EssentiaHatch.class, this))
-                        .or(states(getCasing())))
+                        abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1)
+                                .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setExactLimit(1))
+                                .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1))
+                                .or(TileEntityPredicate.get(EssentiaHatch.class, this).setExactLimit(1))
+                                .or(states(getCasing())))
                 .where('#', any())
                 .build();
     }
@@ -214,9 +271,8 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
         }
     }
 
-    @Override
     public boolean isActive() {
-        return super.isActive() && this.logic.isActive();
+        return (isStructureFormed() && this.logic.isActive() && this.logic.isWorkingEnabled());
     }
 
     @Override
