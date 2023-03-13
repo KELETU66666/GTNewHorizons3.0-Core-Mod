@@ -50,12 +50,17 @@ public class EssentiaLogic {
         if (!this.isWorkingEnabled) return;
         if (hasMaintenance && ((IMaintenance) host).getNumMaintenanceProblems() > 5) return;
 
-        setEssentiaToEUVoltageAndAmp(host.energyContainer.getOutputVoltage(), host.energyContainer.getOutputAmperage());
-        host.energyContainer.addEnergy((long) mEUt * eAmpereFlow);
-        if (!this.isActive) setActive(true);
-        progressTime++;
-        if (progressTime % getMaxProgress() != 0) return;
-        progressTime = 0;
+        if(!(host.energyContainer.getEnergyStored() == host.energyContainer.getEnergyCapacity())) {
+            setEssentiaToEUVoltageAndAmp(host.energyContainer.getOutputVoltage(), host.energyContainer.getOutputAmperage());
+            host.energyContainer.addEnergy((long) mEUt * eAmpereFlow);
+            if (!this.isActive) setActive(true);
+            progressTime++;
+            if (progressTime % getMaxProgress() != 0) return;
+            progressTime = 0;
+        }else{
+            if (this.isActive)
+                setActive(false);
+        }
     }
 
     public void invalidate() {

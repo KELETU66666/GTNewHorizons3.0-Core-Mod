@@ -178,11 +178,11 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
                     && tCurrentItem.getItem().equals(CommonProxy.Upgrades)) {
                 int tMeta = tCurrentItem.getItemDamage();
                 if ((logic.getUpgrade() & (1 << tMeta)) == 0 && tMeta != 0) {
-                    tCurrentItem.setCount(tCurrentItem.getCount() - 1);
-                    logic.setUpgrade(logic.getUpgrade() | (1 << tMeta));
                     aPlayer.sendMessage(new TextComponentString(
                             tCurrentItem.getDisplayName()
                                     + I18n.translateToLocal("largeessentiagenerator.chat")));
+                    tCurrentItem.setCount(tCurrentItem.getCount() - 1);
+                    logic.setUpgrade(logic.getUpgrade() | (1 << tMeta));
                 }
                 updateEssentiaHatchState();
                 return true;
