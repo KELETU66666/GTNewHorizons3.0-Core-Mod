@@ -42,6 +42,10 @@ public class EssentiaLogic {
         this.hasMaintenance = ConfigHolder.machines.enableMaintenance && ((IMaintenance) generator).hasMaintenanceMechanics();
     }
 
+    public int getProgressPercent() {
+        return (int) ((1.0F * progressTime / getMaxProgress()) * 100);
+    }
+
     public void updateLogic() {
         if (!this.isWorkingEnabled) return;
         if (hasMaintenance && ((IMaintenance) host).getNumMaintenanceProblems() > 5) return;

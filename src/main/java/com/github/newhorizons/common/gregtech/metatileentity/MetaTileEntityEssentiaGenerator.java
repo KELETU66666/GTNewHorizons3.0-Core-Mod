@@ -130,6 +130,10 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
+    public int getProgressPercent() {
+        return (int) logic.getProgressPercent();
+    }
+
     protected void addDisplayText(List<ITextComponent> textList) {
         if (!isStructureFormed()) {
             TextComponentTranslation textComponentTranslation = new TextComponentTranslation("gregtech.multiblock.invalid_structure.tooltip", new Object[0]);
@@ -158,7 +162,7 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused", new Object[0]));
             } else if (this.isActive()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.running", new Object[0]));
-                int currentProgress = (int)(this.getProgress() * 5);
+                int currentProgress = getProgressPercent();
                 textList.add(new TextComponentTranslation("gregtech.multiblock.progress", new Object[] { Integer.valueOf(currentProgress) }));
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling", new Object[0]));
