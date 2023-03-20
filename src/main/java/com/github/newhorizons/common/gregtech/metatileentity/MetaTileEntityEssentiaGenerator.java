@@ -16,7 +16,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -28,7 +27,6 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +49,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.github.newhorizons.client.GTMTextures.LARGE_ESSENTIA_GENERATOR;
 import static com.github.newhorizons.common.gregtech.metablock.GTMMetaCasing.MetalCasingType.MAGIC_CASING;
 
 public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase implements IDataInfoProvider, IWorkable {
@@ -132,6 +131,12 @@ public class MetaTileEntityEssentiaGenerator extends MultiblockWithDisplayBase i
 
     public int getProgressPercent() {
         return (int) logic.getProgressPercent();
+    }
+
+
+    @Nonnull
+    protected ICubeRenderer getFrontOverlay() {
+        return LARGE_ESSENTIA_GENERATOR;
     }
 
     protected void addDisplayText(List<ITextComponent> textList) {
