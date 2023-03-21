@@ -49,18 +49,18 @@ public class EssentiaLogic {
     public void updateLogic() {
         if (!this.isWorkingEnabled) return;
         if (hasMaintenance && ((IMaintenance) host).getNumMaintenanceProblems() > 5) return;
+        if(host.energyContainer.getEnergyStored() == host.energyContainer.getEnergyCapacity()) return;
 
-        if(!(host.energyContainer.getEnergyStored() == host.energyContainer.getEnergyCapacity())) {
+
             setEssentiaToEUVoltageAndAmp(host.energyContainer.getOutputVoltage(), host.energyContainer.getOutputAmperage());
-            host.energyContainer.addEnergy((long) mEUt * eAmpereFlow);
-            if (!this.isActive) setActive(true);
+            if (!this.isActive)
+                setActive(mEUt * eAmpereFlow > 0);
             progressTime++;
+            host.energyContainer.addEnergy((long) mEUt * eAmpereFlow);
             if (progressTime % getMaxProgress() != 0) return;
             progressTime = 0;
-        }else{
-            if (this.isActive)
+            if (mEUt * eAmpereFlow <= 0)
                 setActive(false);
-        }
     }
 
     public void invalidate() {
