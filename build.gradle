@@ -116,6 +116,10 @@ repositories {
             includeGroup 'curse.maven'
         }
     }
+    maven {
+        name = 'Galacticraft Legacy'
+        url= 'https://maven.galacticraft.net/repository/legacy/'
+    }
 }
 
 dependencies {
@@ -133,6 +137,11 @@ dependencies {
     implementation fg.deobf("curse.maven:botania-${bot_pid}:${bot_fid}")
     implementation fg.deobf("curse.maven:patchouli-${pcl_pid}:${pcl_fid}")
     implementation fg.deobf("curse.maven:the-twilight-forest-227639:3051450")
+    implementation fg.deobf ("dev.galacticraft:galacticraft-legacy:${gc_require_version}") {
+        exclude group: "mod.dependency", module: "mekanism"
+        exclude group: "mod.dependency", module: "industrialcraft-2"
+        exclude group: "mod.dependency", module: "buildcraft-api"
+    }
 
     // Medium Dependencies
     implementation "curse.maven:crafttweaker-${crt_pid}:${crt_fid}"

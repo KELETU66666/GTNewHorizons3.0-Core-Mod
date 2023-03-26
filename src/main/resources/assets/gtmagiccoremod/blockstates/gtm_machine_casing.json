@@ -25,6 +25,11 @@
           "all": "gtmagiccoremod:blocks/essentia_cell_4"
         }
       },
+      "fishing_machine_casing": {
+        "textures": {
+          "all": "gtmagiccoremod:blocks/fishing_machine_casing"
+        }
+      },
       "magic_machine_casing": {
         "textures": {
           "all": "gtmagiccoremod:blocks/magic_machine_casing"
