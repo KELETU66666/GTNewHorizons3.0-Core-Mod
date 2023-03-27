@@ -8,11 +8,13 @@ import com.github.newhorizons.common.gregtech.GTMMetaBlocks;
 import com.github.newhorizons.common.gregtech.recipe.FishPondLogic;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -248,6 +250,10 @@ public class MetaTileEntityIndustrialFishingPond extends MultiblockWithDisplayBa
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.logic.isActive(), this.logic.isWorkingEnabled());
+    }
+
+    public boolean isActive() {
+        return (isStructureFormed() && this.logic.isActive() && this.logic.isWorkingEnabled());
     }
 
     @Override
