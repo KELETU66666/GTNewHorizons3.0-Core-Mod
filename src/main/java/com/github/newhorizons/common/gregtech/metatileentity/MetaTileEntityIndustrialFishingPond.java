@@ -5,7 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.github.newhorizons.client.GTMTextures;
 import com.github.newhorizons.common.gregtech.GTMMetaBlocks;
-import com.github.newhorizons.common.gregtech.recipe.FishPondLogic;
+import com.github.newhorizons.common.gregtech.FishPondLogic;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -42,6 +42,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -129,7 +130,7 @@ public class MetaTileEntityIndustrialFishingPond extends MultiblockWithDisplayBa
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(134).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setExactLimit(1)).or(abilities(MultiblockAbility.IMPORT_ITEMS).setExactLimit(1)).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1)).or(abilities(MultiblockAbility.MUFFLER_HATCH).setExactLimit(1)).or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1)))
-                .where('#', blocks(Blocks.WATER))
+                .where('#', any())
                 .build();
     }
 
@@ -198,6 +199,11 @@ public class MetaTileEntityIndustrialFishingPond extends MultiblockWithDisplayBa
     @Override
     public IItemHandlerModifiable getImportItems() {
         return itemImportInventory;
+    }
+
+    @Override
+    public IMultipleTankHandler getFluidInventory() {
+        return this.inputFluidInventory;
     }
 
     @Nonnull

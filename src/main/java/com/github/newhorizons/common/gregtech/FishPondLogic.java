@@ -1,30 +1,31 @@
-package com.github.newhorizons.common.gregtech.recipe;
+package com.github.newhorizons.common.gregtech;
 
 import com.github.newhorizons.common.gregtech.metatileentity.MetaTileEntityIndustrialFishingPond;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.common.ConfigHolder;
-import gregtech.common.items.MetaItems;
-import net.minecraft.init.Items;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import scala.tools.cmd.Meta;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import static scala.collection.concurrent.Debug.log;
 
 public class FishPondLogic {
     public static final int MAX_PROGRESS = 20;
@@ -50,6 +51,78 @@ public class FishPondLogic {
         this.metaTileEntity = metaTileEntity;
         this.minEnergyTier = minEnergyTier;
         this.hasMaintenance = ConfigHolder.machines.enableMaintenance && ((IMaintenance) metaTileEntity).hasMaintenanceMechanics();
+    }
+
+
+    private boolean isNotStaticWater(Block block) {
+        return block == Blocks.AIR || block == Blocks.FLOWING_WATER;
+    }
+
+    private boolean depleteInput(FluidStack fluid) {
+        if (fluid == null) {
+            return false;
+        }
+        IMultipleTankHandler inputTank = metaTileEntity.getFluidInventory();
+        if (fluid.isFluidStackIdentical(inputTank.drain(fluid, false))) {
+            inputTank.drain(fluid, true);
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean CheckWater() {
+        int mCurrentDirectionX;
+        int mCurrentDirectionZ;
+        int mOffsetX_Lower;
+        int mOffsetX_Upper;
+        int mOffsetZ_Lower;
+        int mOffsetZ_Upper;
+
+        mCurrentDirectionX = 4;
+        mCurrentDirectionZ = 4;
+
+        mOffsetX_Lower = -4;
+        mOffsetX_Upper = 4;
+        mOffsetZ_Lower = -4;
+        mOffsetZ_Upper = 4;
+
+        // if (aBaseMetaTileEntity.fac)
+
+        final int xDir = this.metaTileEntity.getFrontFacing().getOpposite().getXOffset()
+                * mCurrentDirectionX;
+        final int zDir = this.metaTileEntity.getFrontFacing().getOpposite().getZOffset()
+                * mCurrentDirectionZ;
+
+        int tAmount = 0;
+        for (int i = mOffsetX_Lower + 1; i <= mOffsetX_Upper - 1; ++i) {
+            for (int j = mOffsetZ_Lower + 1; j <= mOffsetZ_Upper - 1; ++j) {
+                for (int h = 0; h < 2; h++) {
+                    BlockPos waterCheckPos = this.metaTileEntity.getPos().add(xDir + i, h, zDir + j);
+                    Block tBlock = this.metaTileEntity.getWorld().getBlockState(waterCheckPos).getBlock();
+                    if (isNotStaticWater(tBlock)) {
+                        if (this.metaTileEntity.getImportFluids() != null) {
+                                    if(depleteInput(FluidRegistry.getFluidStack("water", 1000)))
+                                        this.metaTileEntity.getWorld().setBlockState(
+                                                waterCheckPos,
+                                                Blocks.WATER.getDefaultState());
+                        }
+                    }
+                    tBlock = this.metaTileEntity.getWorld().getBlockState(this.metaTileEntity.getPos().add(xDir + i, h, zDir + j)).getBlock();
+                    if (tBlock == Blocks.WATER || tBlock == Blocks.FLOWING_WATER) {
+                        ++tAmount;
+                        // log("Found Water");
+                    }
+                }
+            }
+        }
+
+        boolean isValidWater = tAmount >= 60;
+        if (isValidWater) {
+            log("Filled structure.");
+        } else {
+            log("Did not fill structure.");
+        }
+        return isValidWater;
     }
 
     public String getLootTable() {
@@ -84,6 +157,8 @@ public class FishPondLogic {
      */
     public void update() {
         if (metaTileEntity.getWorld().isRemote) return;
+
+        if (!CheckWater()) return;
 
         if (hasMaintenance && ((IMaintenance) metaTileEntity).getNumMaintenanceProblems() > 5) return;
 
