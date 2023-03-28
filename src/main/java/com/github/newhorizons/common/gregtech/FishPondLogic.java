@@ -62,7 +62,7 @@ public class FishPondLogic {
         if (fluid == null) {
             return false;
         }
-        IMultipleTankHandler inputTank = metaTileEntity.getFluidInventory();
+        IMultipleTankHandler inputTank = metaTileEntity.getImportFluid();
         if (fluid.isFluidStackIdentical(inputTank.drain(fluid, false))) {
             inputTank.drain(fluid, true);
             return true;
@@ -100,7 +100,7 @@ public class FishPondLogic {
                     BlockPos waterCheckPos = this.metaTileEntity.getPos().add(xDir + i, h, zDir + j);
                     Block tBlock = this.metaTileEntity.getWorld().getBlockState(waterCheckPos).getBlock();
                     if (isNotStaticWater(tBlock)) {
-                        if (this.metaTileEntity.getImportFluids() != null) {
+                        if (this.metaTileEntity.getImportFluid() != null) {
                                     if(depleteInput(FluidRegistry.getFluidStack("water", 1000)))
                                         this.metaTileEntity.getWorld().setBlockState(
                                                 waterCheckPos,
@@ -126,20 +126,20 @@ public class FishPondLogic {
     }
 
     public String getLootTable() {
-        if(this.metaTileEntity.getImportItems().getStackInSlot(0).getTagCompound() != null && this.metaTileEntity.getImportItems().getStackInSlot(0).isItemEqual(IntCircuitIngredient.getIntegratedCircuit(0))) {
-            if (this.metaTileEntity.getImportItems().getStackInSlot(0).getTagCompound().getInteger("Configuration") == 14) {
+        if(this.metaTileEntity.getImportItem().getStackInSlot(0).getTagCompound() != null && this.metaTileEntity.getImportItem().getStackInSlot(0).isItemEqual(IntCircuitIngredient.getIntegratedCircuit(0))) {
+            if (this.metaTileEntity.getImportItem().getStackInSlot(0).getTagCompound().getInteger("Configuration") == 14) {
                 output = 8 + (metaTileEntity.getMaxParallelRecipes() - 2);
                 this.loottable = "gameplay/fishing/fish";
                 this.mode = 14;
             }
             // Junk
-            else if (this.metaTileEntity.getImportItems().getStackInSlot(0).getTagCompound().getInteger("Configuration") == 15) {
+            else if (this.metaTileEntity.getImportItem().getStackInSlot(0).getTagCompound().getInteger("Configuration") == 15) {
                 output = 4;
                 this.mode = 15;
                 this.loottable = "gameplay/fishing/junk";
             }
             // Loot
-            else if (this.metaTileEntity.getImportItems().getStackInSlot(0).getTagCompound().getInteger("Configuration") == 16) {
+            else if (this.metaTileEntity.getImportItem().getStackInSlot(0).getTagCompound().getInteger("Configuration") == 16) {
                 output = 4;
                 this.mode = 16;
                 this.loottable = "gameplay/fishing/treasure";
@@ -187,7 +187,7 @@ public class FishPondLogic {
         }
 
         // increase progress
-        if(this.metaTileEntity.getImportItems().getStackInSlot(0).isItemEqual(IntCircuitIngredient.getIntegratedCircuit(0))  && this.metaTileEntity.getImportItems().getStackInSlot(0).getTagCompound() != null) {
+        if(this.metaTileEntity.getImportItem().getStackInSlot(0).isItemEqual(IntCircuitIngredient.getIntegratedCircuit(0))  && this.metaTileEntity.getImportItem().getStackInSlot(0).getTagCompound() != null) {
 
             progressTime++;
             if (progressTime % MAX_PROGRESS != 0)

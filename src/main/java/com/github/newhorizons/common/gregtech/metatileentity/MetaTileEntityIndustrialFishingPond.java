@@ -196,13 +196,11 @@ public class MetaTileEntityIndustrialFishingPond extends MultiblockWithDisplayBa
         logic.setWorkingEnabled(b);
     }
 
-    @Override
-    public IItemHandlerModifiable getImportItems() {
+    public IItemHandlerModifiable getImportItem() {
         return itemImportInventory;
     }
 
-    @Override
-    public IMultipleTankHandler getFluidInventory() {
+    public IMultipleTankHandler getImportFluid() {
         return this.inputFluidInventory;
     }
 
