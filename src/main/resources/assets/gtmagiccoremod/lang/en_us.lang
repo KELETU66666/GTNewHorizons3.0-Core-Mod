@@ -75,3 +75,4 @@ essentiahatch.chat.1=Cleared.
 largeessentiagenerator.chat=Installed!
 gtmagiccoremod.machine.essentia_generator.name=Large Essentia Generator
 gtmagiccoremod.machine.industrial_fishing_pond.name=ZhuHai Fishing Pond
+gtmagiccoremod.tooltip.warning=§cWarning§r : §bEnergy Hatch§r must be placed in a place that is not in contact with water, §bother parts§r need to be in contact with water!

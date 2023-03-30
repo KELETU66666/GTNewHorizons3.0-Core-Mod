@@ -7,6 +7,7 @@ import com.github.newhorizons.client.GTMTextures;
 import com.github.newhorizons.common.gregtech.GTMMetaBlocks;
 import com.github.newhorizons.common.gregtech.FishPondLogic;
 import com.google.common.collect.Lists;
+import gregicality.multiblocks.common.GCYMConfigHolder;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -118,18 +119,19 @@ public class MetaTileEntityIndustrialFishingPond extends MultiblockWithDisplayBa
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXXXXXXXX", "XXXXXXXXX", "XXXXXXXXX")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "X#######X", "X#######X")
-                .aisle("XXXXXXXXX", "XXXXSXXXX", "XXXXXXXXX")
+                .aisle("EEEEEEEEE", "XXXXXXXXX", "XXXXXXXXX")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EXXXXXXXE", "X#######X", "X#######X")
+                .aisle("EEEEEEEEE", "XXXXSXXXX", "XXXXXXXXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(134).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
+                .where('X', states(getCasingState()).setMinGlobalLimited(105)
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setExactLimit(1)).or(abilities(MultiblockAbility.IMPORT_ITEMS).setExactLimit(1)).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1)).or(abilities(MultiblockAbility.MUFFLER_HATCH).setExactLimit(1)).or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1)))
+                .where('E', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
                 .where('#', any())
                 .build();
     }
@@ -310,5 +312,11 @@ public class MetaTileEntityIndustrialFishingPond extends MultiblockWithDisplayBa
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         this.logic.receiveCustomData(dataId, buf);
+    }
+
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+            tooltip.add(net.minecraft.client.resources.I18n.format("gtmagiccoremod.tooltip.warning", new Object[0]));
+
     }
 }
