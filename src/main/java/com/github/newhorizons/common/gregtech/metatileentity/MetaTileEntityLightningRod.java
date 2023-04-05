@@ -15,13 +15,15 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.XSTR;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.utils.PipelineUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,7 +31,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
@@ -38,15 +43,13 @@ public class MetaTileEntityLightningRod extends TieredMetaTileEntity {
 
     private boolean isActive = false;
 
-    public MetaTileEntityLightningRod(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.EV);
+    public MetaTileEntityLightningRod(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier);
     }
 
     protected void reinitializeEnergyContainer() {
-        long tierVoltage = GTValues.V[GTValues.EV];
         if (isEnergyEmitter())
-        { this.energyContainer = EnergyContainerHandler.emitterContainer(this, getEnergyCapacity(), tierVoltage,
-                512); }
+        { this.energyContainer = EnergyContainerHandler.emitterContainer(this, getEnergyCapacity(), GTValues.V[getTier()], getMaxInputOutputAmperage()); }
     }
 
     @Override
@@ -138,7 +141,7 @@ public class MetaTileEntityLightningRod extends TieredMetaTileEntity {
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityLightningRod(metaTileEntityId);
+        return new MetaTileEntityLightningRod(metaTileEntityId, getTier());
     }
 
     @Override
@@ -161,7 +164,16 @@ public class MetaTileEntityLightningRod extends TieredMetaTileEntity {
 
     @SideOnly(Side.CLIENT)
     private ICubeRenderer getRenderer() {
-        return isActive ? GTMTextures.LIGHINING_ROD_ACTIVE : GTMTextures.LIGHINING_ROD;
+        switch (getTier()) {
+            case GTValues.HV:
+                return isActive ? GTMTextures.LIGHTNING_ROD_ACTIVE_HV : GTMTextures.LIGHTNING_ROD_HV; 
+            case GTValues.EV:
+                return isActive ? GTMTextures.LIGHTNING_ROD_ACTIVE_EV : GTMTextures.LIGHTNING_ROD_EV; 
+            case GTValues.IV:
+                return isActive ? GTMTextures.LIGHTNING_ROD_ACTIVE_IV : GTMTextures.LIGHTNING_ROD_IV;
+            default:
+                return GTMTextures.LIGHTNING_ROD_HV;
+        }
     }
 
     @Override
@@ -169,6 +181,20 @@ public class MetaTileEntityLightningRod extends TieredMetaTileEntity {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getRenderer().render(renderState, translation, colouredPipeline);
+        for(EnumFacing facing : EnumFacing.HORIZONTALS)
+            Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        String key = this.metaTileEntityId.getPath().split("\\.")[0];
+        String mainKey = String.format("gregtech.machine.%s.tooltip", key);
+        if (I18n.hasKey(mainKey)) {
+            tooltip.add(1, I18n.format(mainKey));
+        }
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(net.minecraft.client.resources.I18n.format("gtmagiccoremod.tooltip.usage"));
     }
 
     @Override
@@ -176,11 +202,5 @@ public class MetaTileEntityLightningRod extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
-    }
-
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(net.minecraft.client.resources.I18n.format("gtmagiccoremod.tooltip.usage", new Object[0]));
-
     }
 }
